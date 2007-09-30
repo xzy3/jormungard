@@ -1,0 +1,9 @@
+#Notes about the Renesis player
+
+= Introduction =
+
+Add your content here.
+
+
+= links =
+[http://www.emiasys.net/index.php Renesis]
