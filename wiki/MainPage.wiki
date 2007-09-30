@@ -1,5 +1,9 @@
-#The main page
+#summary The main page
 
 = Introduction =
 
 For the time being this wiki will be a place for me to keep notes
+
+= Notes =
+[RenesisPlayerNotes Renesis Player notes]
+[wxPythonNotes  wxPython notes]
