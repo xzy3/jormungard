@@ -1,0 +1,41 @@
+#summary Answers to programmerPuzzels1
+
+= exclusive-or =
+The values are swapped. 
+= =
+{{{
+x = 0xBEBEBEBE
+y = 0xACACACAC
+}}}
+
+loose proof:
+
+First you have to know a few of the algebraic properties of `^`.
+= =
+  || `a ^ 0 = a` || exclusive-or identity ||
+  || `a ^ a = 0` || self inverse ||
+  || `(a ^ b) ^ c = a ^ (b ^ c)` || associativity ||
+  || `a ^ b = b ^ a` || communitivity ||
+= =
+  # now if you add variables to remove overwrites and solve these
+    # `x ^ y = a`
+    # `a ^ y = b`
+    # `a ^ b = c`
+
+  # substitute 1.1 into 1.2 to get an equation for b
+    # `(x ^ y) ^ y = b`  
+    # `x ^ (y ^ y) = b`
+    # `x ^ 0 = b`
+    # `x = b`
+
+  # substitute 1.1 and 1.2 into 1.3 to get an equation for x
+    # `(x ^ y) ^ (a ^ y) = c`
+    # `(x ^ y) ^ ((x ^ y) ^ y) = c`
+    # `(x ^ y) ^ (x ^ (y ^ y)) = c`
+    # `(x ^ y) ^ (x ^ 0) = c`
+    # `(x ^ y) ^ x = c`
+    # `(x ^ x) ^ y = c`
+    # `0 ^ y = c`
+    # `y = c`
+
+you see that the values of x and y are swapped. because in the code `x == c` and `y == b`.
