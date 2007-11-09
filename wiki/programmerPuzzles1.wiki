@@ -16,12 +16,13 @@ x = x ^ y
 [AnswerPage1 the answer is here]
 
 = modulo power of 2 =
-Can you duplicate the behavior of the following code using bitwise operators? 
+Can you duplicate the behavior of the following code using the & and - operators? 
 = =
+*(note `&` is bitwise and)*
 {{{
 x = 16
 y = 3012
 
-print x mod y
+print y mod x
 }}}
 [AnswerPage1 the answer is here]
