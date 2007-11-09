@@ -39,3 +39,9 @@ First you have to know a few of the algebraic properties of `^`.
     # `y = c`
 
 you see that the values of x and y are swapped. because in the code `x == c` and `y == b`.
+
+= modulo power of 2 =
+
+{{{
+print y & (x - 1)
+}}}
