@@ -13,7 +13,7 @@ y = x ^ y
 x = x ^ y
 }}}
 
-[AnswerPage the answer is here]
+[AnswerPage1 the answer is here]
 
 = modulo power of 2 =
 Can you duplicate the behavior of the following code using bitwise operators? 
@@ -24,4 +24,4 @@ y = 3012
 
 print x mod y
 }}}
-[AnswerPage the answer is here]
+[AnswerPage1 the answer is here]
