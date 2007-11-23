@@ -9,6 +9,7 @@ package ses.math.Arithmetic;
 
 import junit.framework.*;
 import ses.Generators.Generator;
+import ses.util.HashCode;
 
 /**
  *
@@ -32,14 +33,38 @@ public class MaclaurinEtoXTest extends TestCase {
     public void testYield() {
         System.out.println("yield");
 
-        MaclaurinEtoX instance = null;
+        MaclaurinEtoX instance = new MaclaurinEtoX(1.0);
 
-        Object expResult = null;
+        Double expResult = 1.0;
         Object result = instance.yield();
         assertEquals(expResult, result);
 
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite(MaclaurinEtoXTest.class);
+
+        return suite;
+    }
+
+    /**
+     * Test of hashCode method, of class ses.math.Arithmetic.MaclaurinEtoX.
+     */
+    public void testHashCode() {
+        System.out.println("hashCode");
+
+        MaclaurinEtoX instance = new MaclaurinEtoX(1.0);
+        MaclaurinEtoX instanceTwo = new MaclaurinEtoX(1.0);
+
+        for(int i = 0; i < 100; ++i) {
+            assertEquals(instance.hashCode(), instanceTwo.hashCode());
+            instance.yield();
+            instanceTwo.yield();
+        } //end for
+
+        instanceTwo.yield();
+        assertTrue(instance.hashCode() != instanceTwo.hashCode());
     }
 
 }

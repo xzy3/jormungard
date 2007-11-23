@@ -9,6 +9,7 @@ package ses.math.linearAlgebra;
 
 import junit.framework.*;
 import ses.math.MathBase;
+import ses.util.HashCode;
 
 /**
  *
@@ -468,6 +469,39 @@ public class Vector2dTest extends TestCase {
         expResult = false;
         result = instance.independentOf(other);
         assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of toString method, of class ses.math.linearAlgebra.Vector2d.
+     */
+    public void testToString() {
+        System.out.println("toString");
+
+        Vector2d instance = new Vector2d();
+
+        String expResult = "[0.000000, 0.000000]";
+        String result = instance.toString();
+        assertEquals(expResult, result);
+
+    }
+
+    /**
+     * Test of hashCode method, of class ses.math.linearAlgebra.Vector2d.
+     */
+    public void testHashCode() {
+        System.out.println("hashCode");
+
+        Vector2d instance = new Vector2d();
+        Vector2d instance2 = new Vector2d();
+
+        int expResult = instance2.hashCode();
+        int result = instance.hashCode();
+        assertEquals(expResult, result);
+
+        instance.i += Double.MIN_VALUE;
+        result = instance.hashCode();
+
+        assertTrue(expResult != result);
     }
 
 }

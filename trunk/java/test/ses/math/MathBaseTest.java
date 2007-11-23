@@ -93,4 +93,34 @@ public class MathBaseTest extends TestCase {
         assertEquals(expResult, result);
     }
 
+    /**
+     * Test of floatUlps method, of class ses.math.MathBase.
+     */
+    public void testFloatUlps() {
+        System.out.println("floatUlps");
+
+        float lhs = Float.MIN_VALUE;
+        float rhs = 0.0F;
+
+        int expResult = 1;
+        int result = MathBase.floatUlps(lhs, rhs);
+        assertEquals(expResult, result);
+
+    }
+
+    /**
+     * Test of doubleUlps method, of class ses.math.MathBase.
+     */
+    public void testDoubleUlps() {
+        System.out.println("doubleUlps");
+
+        double lhs = 0.0;
+        double rhs = Double.MIN_VALUE;
+
+        long expResult = 1L;
+        long result = MathBase.doubleUlps(lhs, rhs);
+        assertEquals(expResult, result);
+
+    }
+
 }
