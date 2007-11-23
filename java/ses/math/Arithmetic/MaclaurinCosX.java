@@ -18,8 +18,9 @@
 package ses.math.Arithmetic;
 
 import ses.Generators.Generator;
+import ses.util.HashCode;
 
-public class MaclaurinCosX implements Generator{
+public class MaclaurinCosX implements Generator {
 
     double num_step;
     double numerator = 1.0;
@@ -29,7 +30,7 @@ public class MaclaurinCosX implements Generator{
 
     public MaclaurinCosX(double x) { num_step = x * x; } //end constructor
 
-    public Object yield() {
+    public Double yield() {
 
         double ret = numerator / factorial;
 
@@ -41,6 +42,18 @@ public class MaclaurinCosX implements Generator{
         factorial *= next_fac;
 
         return ret;
-    }
+    } //end yield
+
+    public int hashCode() {
+        final int seed = 1549;
+
+        HashCode hash = new HashCode(seed);
+        hash.accumulateHash(this.factorial);
+        hash.accumulateHash(this.next_fac);
+        hash.accumulateHash(this.num_step);
+        hash.accumulateHash(this.numerator);
+
+        return hash.hashCode();
+    } //end hashCode
 
 } //end class Class

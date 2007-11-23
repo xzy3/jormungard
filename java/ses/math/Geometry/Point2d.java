@@ -19,6 +19,7 @@ package ses.math.Geometry;
 
 import ses.math.MathBase;
 import ses.math.linearAlgebra.Vector2d;
+import ses.util.HashCode;
 
 public class Point2d extends MathBase {
 
@@ -39,7 +40,7 @@ public class Point2d extends MathBase {
     public Point2d(Point2d other) { x = other.x; y = other.y; } //end constructor
 
     /** Moves a this point by a distance specified by a vector
-     *  @param rhs The vector to add
+     *  @param vec The vector to add
      */
     public void add(Vector2d vec) { x += vec.i; y += vec.j; } //end add
 
@@ -61,4 +62,13 @@ public class Point2d extends MathBase {
 
     public String toString() { return String.format("(%f, %f)", x, y); } //end toString
 
+    public int hashCode() {
+        final int seed = 269;
+
+        HashCode hash = new HashCode(seed);
+        hash.accumulateHash(this.x);
+        hash.accumulateHash(this.y);
+
+        return hash.hashCode();
+    } //end hashCode
 } //end class Class

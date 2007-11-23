@@ -19,6 +19,7 @@
 package ses.math.linearAlgebra;
 
 import ses.math.MathBase;
+import ses.util.HashCode;
 
 /**
  *
@@ -51,7 +52,7 @@ public class Vector2d extends MathBase {
     /** Creates a vector with the specified direction and length
      *  @param bearing The angle CCW from the positve x radius in radians
      *  @param length  The length of the vector
-     *  @returns A new Vector2d with the given bearing CCW from +x axis and length
+     *  @return A new Vector2d with the given bearing CCW from +x axis and length
      */
     public static Vector2d fromBearing(double bearing, double length) {
         Vector2d ret = new Vector2d(bearing);
@@ -91,7 +92,7 @@ public class Vector2d extends MathBase {
     /** Adds two vectors together returning the result
      *  @param lhs The first vector
      *  @param rhs The second vector
-     *  @returns A new Vector2d equal to (lhs + rhs)
+     *  @return A new Vector2d equal to (lhs + rhs)
      */
     public static Vector2d add(Vector2d lhs, Vector2d rhs) {
         Vector2d ret = new Vector2d(lhs);
@@ -107,7 +108,7 @@ public class Vector2d extends MathBase {
     /** Subtracts one vector from another returing the resulting vector
      *  @param lhs The left vector
      *  @param rhs The vector to subtract
-     *  @returns A new Vector2d equal to (lhs - rhs)
+     *  @return A new Vector2d equal to (lhs - rhs)
      */
     public static Vector2d subtract(Vector2d lhs, Vector2d rhs) {
         Vector2d ret = new Vector2d(lhs);
@@ -139,7 +140,7 @@ public class Vector2d extends MathBase {
     /** Returns the standard cartisan inner product (dot product) of two vectors
      *  @param lhs The first vector
      *  @param rhs The second vector
-     *  @returns The dot product of lhs and rhs
+     *  @return The dot product of lhs and rhs
      */
     public static double dot(Vector2d lhs, Vector2d rhs) { return rhs.i * lhs.i + rhs.j * lhs.j; } //end dot
 
@@ -174,18 +175,18 @@ public class Vector2d extends MathBase {
 
     /** Returns the length of the vector arg
      *  @param arg The vector
-     *  @returns The length of arg
+     *  @return The length of arg
      */
     public static double norm(Vector2d arg) { return Math.sqrt(Vector2d.normSqr(arg)); } //end norm
 
     /** Returns the squared length of this vector
-     *  @returns This.norm() ** 2
+     *  @return This.norm() ** 2
      */
     public double normSqr() { return Vector2d.normSqr(this); } //end normSqr
 
     /** Returns the squared length of the vector arg
      *  @param arg The vector
-     *  @returns arg.norm() ** 2
+     *  @return arg.norm() ** 2
      */
     public static double normSqr(Vector2d arg) { return Vector2d.dot(arg, arg); } //end normSqr
 
@@ -196,7 +197,7 @@ public class Vector2d extends MathBase {
 
     /** Returns a Normalized copy of a vector
      *  @param arg The vector to normalize
-     *  @returns A normalized copy of arg
+     *  @return A normalized copy of arg
      *  @throws ArithmaticException if arg.norm() == 0
      */
     public static Vector2d normalize(Vector2d arg) {
@@ -230,19 +231,19 @@ public class Vector2d extends MathBase {
     } //end rotate
 
     /** Returns the angle this vector makes CCW from the +x axis in radians
-     *  @returns The angle in radians made CCW from the +x axis and this vector
+     *  @return The angle in radians made CCW from the +x axis and this vector
      */
     public double bearing() { return Vector2d.bearing(this); } //end bearing
 
     /** Returns the angle a vector makes CCW from the +x axis in radians
      *  @param arg The vector to find the bearing of
-     *  @returns The angle in radians CCW from the +x axis to arg
+     *  @return The angle in radians CCW from the +x axis to arg
      */
     public static double bearing(Vector2d arg) { return Math.atan2(arg.j, arg.i); } //end bearing
 
     /** Returns the cos of the smallest angle made by this vector and another
      *  @param arg another vector
-     *  @returns The cos of the angle made by this and rhs
+     *  @return The cos of the angle made by this and rhs
      */
     public double cos(Vector2d arg) {
         return Vector2d.cos(this, arg);
@@ -251,7 +252,7 @@ public class Vector2d extends MathBase {
     /** Returns the cos of the smallest angle made by two vectors
      *  @param lhs The first vector
      *  @param rhs The second
-     *  @returns the cos of the angle between lhs an rhs
+     *  @return the cos of the angle between lhs an rhs
      */
     public static double cos(Vector2d lhs, Vector2d rhs) {
         double denom = lhs.norm() * rhs.norm();
@@ -282,14 +283,14 @@ public class Vector2d extends MathBase {
     } //end sin
 
     /** Returns the quadrent this vector lies in (1-4) and 0 for the vector [0,0]
-     *  @returns the quadrent this vector lies in (1-4) and 0 for the vector [0,0]
+     *  @return the quadrent this vector lies in (1-4) and 0 for the vector [0,0]
      */
     public int quadrant() {
        return Vector2d.quadrant(this);
     } //end quadrant
 
-    /** Returns the quadrent a vector lies in (1-4) and 0 for the vector [0,0]
-     *  @returns The quadrent a vector lies in (1-4) or 0 for the vector [0,0]
+    /** Returns the quadrent a vector lies in (1-4) or 0 for the vector [0,0]
+     *  @return The quadrent a vector lies in (1-4) or 0 for the vector [0,0]
      */
     public static int quadrant(Vector2d rhs) {
          if(rhs.i == 0 && rhs.j ==0) {
@@ -326,7 +327,7 @@ public class Vector2d extends MathBase {
 
     /** Returns true if the sin value between this vector and another is smaller then epsilon
      *  @param other The other vector
-     *  @returns True if Vector2d.sin(this, other) < epsilon
+     *  @return True if Vector2d.sin(this, other) < epsilon
      */
     public boolean parallel(Vector2d other) {
         return Vector2d.parallel(this, other, this.maxDoubleUlps);
@@ -335,7 +336,8 @@ public class Vector2d extends MathBase {
     /** Returns true if the sin value between the vectors is less then a small epsilon
      *  @param lhs The first vector
      *  @param rhs The second vector
-     *  @returns True if Vector2d.sin(rhs, lhs) < epsilon
+     *  @param maxUlps The maxumum number of ulps to allow
+     *  @return True if Vector2d.sin(rhs, lhs) == 0.0 within the given number of ulps
      */
     public static boolean parallel(Vector2d lhs, Vector2d rhs, long maxUlps) {
         return MathBase.doubleCompare(Vector2d.sin(lhs, rhs), 0.0, maxUlps);
@@ -343,7 +345,7 @@ public class Vector2d extends MathBase {
 
     /** Returns if this vector is independent of another (perpendicular to)
      *  @param other The other vector
-     *  @return True if Vector2d.dot(this, other) < epsilon;
+     *  @return True if Vector2d.dot(this, other) == 0.0 within this.maxDoubleUlps
      */
     public boolean independentOf(Vector2d other) {
         return Vector2d.independentOf(this, other, this.maxDoubleUlps);
@@ -352,11 +354,21 @@ public class Vector2d extends MathBase {
     /** Returns if the two vectors are independent (perpendicular)
      *  @param lhs The first vector
      *  @param rhs The second vector
-     *  @return True if Vector2d.dot(rhs, lhs) < epsilon
+     *  @return True if Vector2d.dot(rhs, lhs) == 0.0 within this.maxDoubleUlps
      */
     public static boolean independentOf(Vector2d lhs, Vector2d rhs, long maxUlps) {
         return MathBase.doubleCompare(Vector2d.dot(lhs, rhs), 0.0, maxUlps);
     } //end independantOf
 
-    public String toString() { return String.format("[%f, %f]", i, j); } //end toString
+    public String toString() { return String.format("[%5f, %5f]", i, j); } //end toString
+
+    public int hashCode() {
+        final int seed = 991;
+
+        HashCode hash = new HashCode(seed);
+        hash.accumulateHash(this.i);
+        hash.accumulateHash(this.j);
+
+        return hash.hashCode();
+    } //end hashCode
 } //end class Vector2d
