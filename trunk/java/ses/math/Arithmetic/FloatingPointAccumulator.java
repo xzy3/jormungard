@@ -18,33 +18,51 @@
 package ses.math.Arithmetic;
 
 public class FloatingPointAccumulator {
-    
+
     private double sum = 0.0;
     private double guard_digits = 0.0;
-    
+
     /** Uses the Kahan compinsated floating point summation algorithm to sum doubles
      *  @param nextValue The next double to add to the sum
      */
     public void accumulate(double nextValue) {
-        
+
         double Y;
-        
+
         if(nextValue > sum) {
             Y = sum - guard_digits;
             sum = nextValue;
-        } else { 
-            Y = nextValue - guard_digits;                        
+        } else {
+            Y = nextValue - guard_digits;
         } //end if-else
-        
+
         double temp = sum + Y;
         guard_digits = (temp - sum) - Y;
-        sum = temp;        
+        sum = temp;
     } //end accumulate
-    
+
     /** Gets the results of the summation */
     public double getSum() { return sum; } //end getSum
-    
+
     /** Gets the current compisation term */
     public double getErrorTerm() { return guard_digits; }
-    
+
+    /** Clears the sum to zero */
+    public void clear() {
+        this.guard_digits = 0.0;
+        this.sum = 0.0;
+    } //end clear
+
+    public int hashCode() {
+        int seed = 607;
+        long temp = Double.doubleToRawLongBits(guard_digits);
+
+        int ret = seed;
+        ret ^= (int)(temp >> 32) ^ (int)(temp & 0xFFFFFFFF);
+
+        temp = Double.doubleToRawLongBits(sum);
+        ret ^= (int)(temp >> 32) ^ (int)(temp & 0xFFFFFFFF);
+
+        return ~ret;
+    } //end hashCode
 } //end class Class

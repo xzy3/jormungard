@@ -18,6 +18,7 @@
 package ses.math.Arithmetic;
 
 import ses.Generators.Generator;
+import ses.util.HashCode;
 
 public class MaclaurinEtoX implements Generator {
 
@@ -29,7 +30,7 @@ public class MaclaurinEtoX implements Generator {
 
     public MaclaurinEtoX(double x) { eval_at = x; } //end constructor
 
-    public Object yield() {
+    public Double yield() {
 
         double ret = numerator / factorial;
 
@@ -40,5 +41,17 @@ public class MaclaurinEtoX implements Generator {
 
         return ret;
     } //end yield
+
+    public int hashCode() {
+        final int seed = 1627;
+
+        HashCode hash = new HashCode(seed);
+        hash.accumulateHash(this.eval_at);
+        hash.accumulateHash(this.factorial);
+        hash.accumulateHash(this.next_fac_term);
+        hash.accumulateHash(this.numerator);
+
+        return hash.hashCode();
+    } //end hashCode
 
 } //end class Class

@@ -19,6 +19,7 @@ package ses.math.Geometry;
 
 import ses.math.MathBase;
 import ses.math.linearAlgebra.Vector2d;
+import ses.util.HashCode;
 
 public class ParametricLine2d extends MathBase {
 
@@ -37,7 +38,7 @@ public class ParametricLine2d extends MathBase {
 
     /** Returns the point on the line at variable t
      *  @param t The input variable
-     *  @returns A new point where equal to (vector * t) + point
+     *  @return A new point equal to (vector * t) + point
      */
     public Point2d f(double t) {
         return Point2d.add(point, Vector2d.scale(vector, t));
@@ -55,7 +56,7 @@ public class ParametricLine2d extends MathBase {
         //if normsqr is nearly zero then the two points are moving at similar
         //speeds and along nearly parallel lines. They are as close together
         //at t=0 as any other time (within constriants of double persision arithmatic)
-        if(MathBase.doubleCompare(normsqr, 0.0, maxUlps)) {
+        if(!MathBase.doubleCompare(normsqr, 0.0, maxUlps)) {
             Vector2d wnought = Vector2d.subtract(lhs.point.toVector2d(), rhs.point.toVector2d());
             wnought.scale(-1.0);
 
@@ -82,4 +83,13 @@ public class ParametricLine2d extends MathBase {
         return Math.sqrt(ParametricLine2d.closestApprochDistSqr(lhs, rhs, maxUlps));
     } //end closestApprochDist
 
+    public int hashCode() {
+        int seed = 307;
+
+        HashCode hash = new HashCode(seed);
+        hash.accumulateHash(point);
+        hash.accumulateHash(vector);
+
+        return hash.hashCode();
+    } //end hashCode
 } //end class Class

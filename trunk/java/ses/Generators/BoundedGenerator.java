@@ -1,6 +1,6 @@
-/* Generator
+/* BoundedGenerator
  *
- * Copyright 2007 Seth Sims
+ * Copyright November 21, 2007 Seth Sims
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,18 @@
 
 package ses.Generators;
 
-/** Generator interface generators create series of returns with repeated calls to yield */
-public interface Generator<T> {
+import java.util.Iterator;
 
-    public T yield();
+/** This class represents a generator with a fixed sequence length */
+
+public interface BoundedGenerator<T> extends Generator<T>, Iterator<T>, Iterable<T> {
+
+    /** Returns whether the sequence this generator represents has more values */
+    public boolean hasNext();
+
+    /** Returns the next element in the sequence. This should usually just
+     *  be "return this.yield();"
+     */
+    public T next();
 
 } //end class Class
