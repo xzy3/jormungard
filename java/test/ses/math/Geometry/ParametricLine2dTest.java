@@ -10,12 +10,15 @@ package ses.math.Geometry;
 import junit.framework.*;
 import ses.math.MathBase;
 import ses.math.linearAlgebra.Vector2d;
+import ses.util.HashCode;
 
 /**
  *
  * @author Seth Sims
  */
 public class ParametricLine2dTest extends TestCase {
+
+    private final long maxUlps = 1000000;
 
     public ParametricLine2dTest(String testName) {
         super(testName);
@@ -42,9 +45,9 @@ public class ParametricLine2dTest extends TestCase {
         double t = 0.0;
         ParametricLine2d instance = new ParametricLine2d();
 
-        Point2d expResult = new Point2d();
-        Point2d result = instance.f(t);
-        assertEquals(expResult, result);
+        Vector2d expResult = new Point2d().toVector2d();
+        Vector2d result = instance.f(t).toVector2d();
+        assertTrue(Vector2d.equal(expResult, result, maxUlps));
     }
 
     /**
@@ -87,6 +90,21 @@ public class ParametricLine2dTest extends TestCase {
         double expResult = 0.0;
         double result = instance.closestApprochDist(other);
         assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of hashCode method, of class ses.math.Geometry.ParametricLine2d.
+     */
+    public void testHashCode() {
+        System.out.println("hashCode");
+
+        ParametricLine2d instance = new ParametricLine2d();
+        ParametricLine2d instanceTwo = new ParametricLine2d();
+
+        assertEquals(instance.hashCode(), instanceTwo.hashCode());
+
+        instance.point.x += Double.MIN_VALUE;
+        assertTrue(instance.hashCode() != instanceTwo.hashCode());
     }
 
 }

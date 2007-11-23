@@ -10,6 +10,7 @@ package ses.math.Geometry;
 import junit.framework.*;
 import ses.math.MathBase;
 import ses.math.linearAlgebra.Vector2d;
+import ses.util.HashCode;
 
 /**
  *
@@ -59,6 +60,21 @@ public class Line2dTest extends TestCase {
         boolean expResult = true;
         boolean result = instance.isPerpendicular(other);
         assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of hashCode method, of class ses.math.Geometry.Line2d.
+     */
+    public void testHashCode() {
+        System.out.println("hashCode");
+
+        Line2d instance = new Line2d();
+        Line2d instanceTwo = new Line2d();
+
+        assertEquals(instance.hashCode(), instanceTwo.hashCode());
+
+        instance.c += Double.MIN_VALUE;
+        assertTrue(instance.hashCode() != instanceTwo.hashCode());
     }
 
 }

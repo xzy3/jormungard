@@ -9,6 +9,7 @@ package ses.math.Arithmetic;
 
 import junit.framework.*;
 import ses.Generators.Generator;
+import ses.util.HashCode;
 
 /**
  *
@@ -37,6 +38,31 @@ public class MaclaurinCosXTest extends TestCase {
         Object expResult = 1.0;
         Object result = instance.yield();
         assertEquals(expResult, result);
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite(MaclaurinCosXTest.class);
+
+        return suite;
+    }
+
+    /**
+     * Test of hashCode method, of class ses.math.Arithmetic.MaclaurinCosX.
+     */
+    public void testHashCode() {
+        System.out.println("hashCode");
+
+        MaclaurinCosX instance = new MaclaurinCosX(0);
+        MaclaurinCosX instanceTwo = new MaclaurinCosX(0);
+
+        for(int i = 0; i < 100; ++i) {
+            assertEquals(instance.hashCode(), instanceTwo.hashCode());
+            instance.yield();
+            instanceTwo.yield();
+        } //end for
+
+        instanceTwo.yield();
+        assertTrue(instance.hashCode() != instanceTwo.hashCode());
     }
 
 }
