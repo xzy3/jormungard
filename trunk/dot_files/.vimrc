@@ -34,8 +34,14 @@ colorscheme pablo
 autocmd BufEnter * lcd %:p:h
 
 "source the .vimrc file when it is saved
-autocmd! bufwritepost .vimrc source $HOME/.vimrc
-autocmd! bufwritepost _vimrc source $HOME/_vimrc
+"make it easy to edit my vimrc
+if $COMSPEC != ""
+	cab vimrc $HOME/_vimrc
+	autocmd! bufwritepost _vimrc source $HOME/_vimrc
+else
+	cab vimrc $HOME/.vimrc
+	autocmd! bufwritepost .vimrc source $HOME/.vimrc
+endif
 
 "no need to backup subversion commit logs
 autocmd! BufRead svn-commit.tmp :setlocal nobackup
@@ -125,7 +131,7 @@ if $COMSPEC != ""
 
 else
 	"linux stuff
-	autocmd! BufWritePost *.py,*.bf,*.sh !chmod u+x %
+	autocmd! BufWritePost *.py,*.bf,*.sh silent !chmod u+x %
 
 endif
 

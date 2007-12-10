@@ -24,18 +24,3 @@ esac
 
 #set our prompt
 PS1="[\t] \u@\h \w\n\$ "
-
-function range() {
-    BEGIN=$1
-    END=$2
-    STEP=$3
-
-    if [ -n $STEP ]; then
-    	STEP=1
-    fi
-
-    while [ $BEGIN -le $END ]; do
-        echo $BEGIN
-	BEGIN=$(($BEGIN + 1))
-    done
-}
