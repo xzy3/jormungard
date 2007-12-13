@@ -9,7 +9,8 @@ set lazyredraw "dont redraw while running macros
 set showmode
 set showcmd
 
-abbrev *copy* <esc>:call append(line(".") - 1, strftime("Copyright (C) %Y Seth Sims"))<cr>i
+"call strftime and then insert the contents of the = register
+abbrev *copy* <C-R>=strftime("Copyright (C) %Y Seth Sims")<CR>
 
 match spellRare /[ \t\r]\+$/
 
@@ -36,15 +37,15 @@ autocmd BufEnter * lcd %:p:h
 "source the .vimrc file when it is saved
 "make it easy to edit my vimrc
 if $COMSPEC != ""
-	cab vimrc $HOME/_vimrc
-	autocmd! bufwritepost _vimrc source $HOME/_vimrc
+    cab vimrc $HOME/_vimrc
+    autocmd! bufwritepost _vimrc source $HOME/_vimrc
 else
-	cab vimrc $HOME/.vimrc
-	autocmd! bufwritepost .vimrc source $HOME/.vimrc
+    cab vimrc $HOME/.vimrc
+    autocmd! bufwritepost .vimrc source $HOME/.vimrc
 endif
 
 "no need to backup subversion commit logs
-autocmd! BufRead svn-commit.tmp :setlocal nobackup
+autocmd! BufRead svn-commit.tmp setlocal nobackup
 
 " Text Formating
 set nowrap "dont break lines
@@ -61,78 +62,78 @@ autocmd! FileType c,cpp,java call CStyle()
 autocmd! FileType make call MakeStyle()
 autocmd! FileType python call PythonStyle()
 autocmd! FileType sh call ShStyle()
+autocmd! BufReadPre *vimrc call ProgramStyle()
 
 function! CommentBind(replacement)
-	execute "map " a:replacement
-	ounmap 
+    execute "map " a:replacement "e<CR>"
+    ounmap 
 endfunction
 
 function! ProgramStyle()
-	set tabstop=4
-	set softtabstop=4 "make 4 spaces act like tabs
-	set expandtab
-	set smarttab
+    set tabstop=4
+    set softtabstop=4 "make 4 spaces act like tabs
+    set expandtab
+    set smarttab
 
-	set showmatch "show matching ( ) and { }
+    set showmatch "show matching ( ) and { }
 
-	"kill trailing whitespace
-	autocmd! BufWritePre * :%s/[ \t\r]\+$//e
+    "kill trailing whitespace
+    autocmd! BufWritePre * :%s/[ \t\r]\+$//e
 
-	"search up the directory tree for an exuberent ctags file
-	"but only 4 levels
-	set tags=tags;../../../../
+    "search up the directory tree for an exuberent ctags file
+    "but only 4 levels
+    set tags=./tags;../../../../
 endfunction "ProgramStyle
 
 function! CStyle()
-	call ProgramStyle()
+    call ProgramStyle()
 
-	call CommentBind(':s~^[ ]\\{0,2}~//~<CR>')
+    call CommentBind(':s~^[ ]\{0,2}~//~')
 
-	set cindent
-	set formatoptions+=ro
+    set cindent
+    set formatoptions+=ro
 endfunction "CStyle
 
 function! MakeStyle()
-	call ProgramStyle()
+    call ProgramStyle()
 
-	call CommentBind(':s/^[ ]\\?/#/<CR>')
+    call CommentBind(':s/^[ ]\?/#/')
 
-	set noexpandtab
-	set autoindent
-	set list
-	set lcs=tab:->
+    set noexpandtab
+    set autoindent
+    set list
+    set lcs=tab:..
 endfunction "MakeStyle
 
 function! PythonStyle()
-	call ProgramStyle()
+    call ProgramStyle()
 
-	call CommentBind(':s/^[ ]\\?/#/<CR>')
+    call CommentBind(':s/^[ ]\?/#/')
 
-	abbrev #! #!/usr/bin/python
+    abbrev #! #!/usr/bin/python
+    match spellRare /;$/
 
-	set list
-	set lcs=tab:->
-	set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
-	set smartindent
+    set list
+    set lcs=tab:..
+    set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+    set smartindent
 endfunction "PythonStyle
 
 function! ShStyle()
-	call ProgramStyle()
-	call CommentBind(':s/^[ ]\\?/#/<CR>')
+    call ProgramStyle()
+    call CommentBind(':s/^[ ]\?/#/')
 
-	abbrev #! #!/bin/bash
+    abbrev #! #!/bin/bash
 
 endfunction "ShStyle
 
 
 if $COMSPEC != ""
 
-	"windows stuff
+    "windows stuff
 
 else
-	"linux stuff
-	autocmd! BufWritePost *.py,*.bf,*.sh silent !chmod u+x %
+    "linux stuff
+    autocmd! BufWritePost *.py,*.bf,*.sh silent !chmod u+x %
 
 endif
-
-
