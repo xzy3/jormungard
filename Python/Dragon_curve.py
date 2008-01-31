@@ -6,7 +6,7 @@ if __name__ == "__main__":
 
     fold_right = [True]
     step_count = 14
-    origin=(-220,110)
+    origin=(-160,110)
     length = 2
     turtle.tracer(False)
 
