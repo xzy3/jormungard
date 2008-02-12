@@ -1,8 +1,6 @@
 def construct_num_set(begin,end):
     return set(range(begin,end))
 
-UNIVERSE = construct_num_set(1,10)
-
 class sudoku_board:
     def __init__(self, board_string):
         self.row  = [ construct_num_set(1,10) for j in range(9) ]
@@ -73,7 +71,7 @@ class sudoku_board:
         else:
             return set([])
 
-    def find_single_choice(self):
+    def find_single(self):
         for row in range(9):
             for col in range(9):
                 pos = self.get_possibilities(row, col)
@@ -84,11 +82,50 @@ class sudoku_board:
 
         return False
 
+    def poss_histogram(self, list):
+        num = dict([ (i, 0) for i in range(1,10) ])
+
+        for pos in list:
+            for i in pos:
+                num[i] += 1
+
+        return num
+
+    def find_hidden_single(self):
+        rows =  [ self.poss_histogram(self.get_row(i)) for i in range(9) ]
+        cols =  [ self.poss_histogram(self.get_col(i)) for i in range(9) ]
+        cells = [ self.poss_histogram(self.get_cell(i)) for i in range(9) ]
+
+        for row in range(9):
+            for col in range(9):
+                pos = self.get_possibilities(row, col)
+
+
+                for digit in pos:
+                    if (rows[row][digit] == 1 or
+                        cols[col][digit] == 1 or
+                        cells[self.calc_cell(row,col)][digit] ==1):
+
+                        self.update_board(row, col, digit)
+                        return True
+
+        return False
+
+
 board_string =  "...7..8......4..3......9..16..5......1..3..4...5..1..75..2..6...3..8..9...7.....2"
 board_string_scan_only = ".91745.6.4....1.7.573....4.....37.5...92.46...3.65.....1....536.4.9....8.2.57649."
 
 board = sudoku_board(board_string)
+
 print board.print_board()
 
-while board.find_single_choice():
-    print board.print_board()
+while True:
+    if board.find_single():
+        print board.print_board()
+        continue
+
+    if board.find_hidden_single():
+        print board.print_board()
+        continue
+
+    break
