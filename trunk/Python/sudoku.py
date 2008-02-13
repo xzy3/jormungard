@@ -71,7 +71,7 @@ class sudoku_board:
         else:
             return set([])
 
-    def find_single(self):
+    def find_single_canidate(self):
         for row in range(9):
             for col in range(9):
                 pos = self.get_possibilities(row, col)
@@ -82,32 +82,63 @@ class sudoku_board:
 
         return False
 
-    def poss_histogram(self, list):
-        num = dict([ (i, 0) for i in range(1,10) ])
+    def poss_histogram(self, *names, **params):
+        num = dict([ (i, []) for i in range(1,10) ])
 
-        for pos in list:
-            for i in pos:
-                num[i] += 1
-
-        return num
-
-    def find_hidden_single(self):
-        rows =  [ self.poss_histogram(self.get_row(i)) for i in range(9) ]
-        cols =  [ self.poss_histogram(self.get_col(i)) for i in range(9) ]
-        cells = [ self.poss_histogram(self.get_cell(i)) for i in range(9) ]
-
-        for row in range(9):
+        if "row" in params:
+            row = params["row"]
             for col in range(9):
-                pos = self.get_possibilities(row, col)
+                for poss in self.get_possibilities(row, col):
+                    num[poss].append((row,col))
+
+            return num
+
+        if "col" in params:
+            col = params["col"]
+            for row in range(9):
+                for poss in self.get_possibilities(row, col):
+                    num[poss].append((row,col))
+
+            return num
+
+        if "cell" in params:
+            row_begin,col_begin = self.calc_cell_corner(params["cell"])
+
+            for row in range(row_begin, row_begin + 3):
+                for col in range(col_begin, col_begin + 3):
+                    for poss in self.get_possibilities(row, col):
+                        num[poss].append((row,col))
+
+            return num
 
 
-                for digit in pos:
-                    if (rows[row][digit] == 1 or
-                        cols[col][digit] == 1 or
-                        cells[self.calc_cell(row,col)][digit] ==1):
 
-                        self.update_board(row, col, digit)
-                        return True
+    def find_single_position(self):
+
+        for i in range(9):
+            for digit,row in self.poss_histogram(row=i).iteritems():
+                if len(row) == 1:
+                    i,j = row[0]
+
+                    self.update_board( i, j, digit)
+
+                    return True
+
+            for digit,col in self.poss_histogram(col=i).iteritems():
+                if len(col) == 1:
+                    i,j = col[0]
+
+                    self.update_board( i, j, digit)
+
+                    return True
+
+            for digit,cell in self.poss_histogram(cell=i).iteritems():
+                if len(cell) == 1:
+                    i,j = cell[0]
+
+                    self.update_board( i, j, digit)
+
+                    return True
 
         return False
 
@@ -115,16 +146,16 @@ class sudoku_board:
 board_string =  "...7..8......4..3......9..16..5......1..3..4...5..1..75..2..6...3..8..9...7.....2"
 board_string_scan_only = ".91745.6.4....1.7.573....4.....37.5...92.46...3.65.....1....536.4.9....8.2.57649."
 
-board = sudoku_board(board_string)
+board = sudoku_board(board_string_scan_only)
 
 print board.print_board()
 
 while True:
-    if board.find_single():
+    if board.find_single_canidate():
         print board.print_board()
         continue
 
-    if board.find_hidden_single():
+    if board.find_single_position():
         print board.print_board()
         continue
 
