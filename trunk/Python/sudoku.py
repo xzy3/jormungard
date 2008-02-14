@@ -7,7 +7,9 @@ class sudoku_board:
         self.col  = [ construct_num_set(1,10) for j in range(9) ]
         self.cell = [ construct_num_set(1,10) for j in range(9) ]
 
-        self.board = [ [ set([])  for j in range(9) ] for k in range(9) ]
+        self.buckets = dict()
+
+        self.board = [ [ -1  for j in range(9) ] for k in range(9) ]
 
         col,row = 0,0
 
@@ -25,7 +27,7 @@ class sudoku_board:
 
         for row in self.board:
             for col in row:
-                if type(col) == set:
+                if col == -1:
                     board_repr += "."
 
                 else:
@@ -39,18 +41,24 @@ class sudoku_board:
 
         for row in self.board:
             for col in row:
-                if type(col) == set:
+                if col == -1:
                     board_str += "_"
 
                 else:
                     board_str += str(col)
 
-            board_str += "\n"
+            board_str += "\n\r"
 
         return board_str
 
+    def is_complete(self):
+        for i in range(9):
+            if len(self.row[i]) != 0 or len(self.col[i]) != 0 or len(self.cell[i]) != 0:
+                return False
+
+        return True
+
     def update_board(self, row, col, value):
-        print "update board", row, col, value
         num = set([value])
         self.row[row] -= num
         self.col[col] -= num
@@ -59,15 +67,99 @@ class sudoku_board:
 
         self.board[row][col] = value
 
+    def eliminate_poss(self, value, *name, **param):
+
+        if "row" in param and "col" in param:
+
+            tup = (param["row"],param["col"])
+            if value not in self.get_possibilities(tup):
+                return False
+
+            if tup not in self.buckets:
+                self.buckets[tup] = set([value])
+
+            else:
+                self.buckets[tup] |= set([value])
+
+            return True
+
+        elif "row" in param:
+            progress = False
+
+            for col in range(9):
+                tup = (param["row"], col)
+
+                if tup not in param["exceptions"] and value in self.get_possibilities(tup):
+                    progress = True
+
+                    if tup not in self.buckets:
+                        self.buckets[tup] = set([value])
+
+                    else:
+                        self.buckets[tup] |= self([value])
+
+            return progress
+
+        elif "col" in param:
+            progress = False
+
+            for row in range(9):
+                tup = (row, param["col"])
+
+                if tup not in param["exceptions"] and value in self.get_possibilities(tup):
+                    progress = True
+
+                    if tup not in self.buckets:
+                        self.buckets[tup] = set([value])
+
+                    else:
+                        self.buckets[tup] |= self([value])
+
+            return progress
+
+        elif "cell" in param:
+            progress = False
+
+            row,col = self.calc_cell_corner(param["cell"])
+
+            for i in range(row, row + 3):
+                for j in range(col, col + 3):
+
+                    tup = (i,j)
+
+                    if tup not in param["exceptions"] and value in self.get_possibilities(tup):
+                        progress = True
+
+                        if tup not in self.buckets:
+                            self.buckets[tup] = set([value])
+
+                        else:
+                            self.buckets[tup] |= set([value])
+
+            return progress
+
+        return False
+
     def calc_cell(self, row, col):
         return ((row // 3) * 3 + (col // 3))
 
     def calc_cell_corner(self, cell):
         return ((cell // 3) * 3, (cell % 3) * 3)
 
-    def get_possibilities(self, row, col):
-        if type(self.board[row][col]) == set :
-            return (self.row[row] & self.col[col] & self.cell[self.calc_cell(row,col)]) - self.board[row][col]
+    def get_possibilities(self, row_param, col_param=False):
+        if type(row_param) == tuple:
+            row,col = row_param
+        else:
+            row = row_param
+            col = col_param
+
+        if self.board[row][col] == -1 :
+            ret = self.row[row] & self.col[col] & self.cell[self.calc_cell(row,col)]
+
+            if (row,col) in self.buckets:
+                ret -= self.buckets[(row,col)]
+
+            return ret
 
         else:
             return set([])
@@ -79,44 +171,57 @@ class sudoku_board:
 
         if "row" in params:
             row = params["row"]
-            out = [ (row, col, self.get_possibilities(row, col)) for col in range(9) ]
+            return dict([ ((row, col), self.get_possibilities(row, col)) for col in range(9) ])
 
         elif "col" in params:
             col = params["col"]
-            return [ (row, col, self.get_possibilities(row, col)) for row in range(9) ]
+            return dict([ ((row, col), self.get_possibilities(row, col)) for row in range(9) ])
 
         elif "cell" in params:
-            row,col = self.calc_cell_corner(param["cell"])
-            return [ (i, j, self.get_possibilities(i, j)) for i in range(row, row + 3) for j in range(col, col + 3)]
+            row,col = self.calc_cell_corner(params["cell"])
+            return dict([ ((i, j), self.get_possibilities(i, j)) for i in range(row, row + 3) for j in range(col, col + 3)])
 
     def poss_histogram(self, *names, **params):
         num = dict([ (i, []) for i in range(1,10) ])
 
         if "row" in params:
             row = params["row"]
-            for col in range(9):
-                for poss in self.get_possibilities(row, col):
-                    num[poss].append((row,col))
+            for position,col in self.get_poss_list(row=row).iteritems():
+                for digit in col:
+                    num[digit].append(position)
 
             return num
 
         if "col" in params:
             col = params["col"]
-            for row in range(9):
-                for poss in self.get_possibilities(row, col):
-                    num[poss].append((row,col))
+            for position,row in self.get_poss_list(col=col).iteritems():
+                for digit in row:
+                    num[digit].append(position)
 
             return num
 
         if "cell" in params:
-            row_begin,col_begin = self.calc_cell_corner(params["cell"])
+            cell = params["cell"]
 
-            for row in range(row_begin, row_begin + 3):
-                for col in range(col_begin, col_begin + 3):
-                    for poss in self.get_possibilities(row, col):
-                        num[poss].append((row,col))
+            for position,value in self.get_poss_list(cell=cell).iteritems():
+                for digit in value:
+                    num[digit].append(position)
 
             return num
+
+    def scan_single_canidate(self):
+
+        for row in range(9):
+            for col in range(9):
+                poss = self.get_possibilities(row, col)
+
+                if self.board[row][col] == -1 and len(poss) == 1:
+                    self.update_board(row, col, poss.pop())
+
+                    return True
+
+        return False
+
 
     def scan_single_position(self):
 
@@ -149,6 +254,7 @@ class sudoku_board:
 
     def scan_canidate_line(self):
         histogram_vector = [ self.poss_histogram(cell=i) for i in range(9) ]
+        progress = False
 
         for histogram in histogram_vector:
             for digit, pos in histogram.iteritems():
@@ -156,19 +262,16 @@ class sudoku_board:
                     row1,col1 = pos[0]
                     row2,col2 = pos[1]
 
-                    print pos, digit
                     if row1 == row2:
-                        for i in range(9):
-                            if i != col1 and i != col2 and type(self.board[row1][i]) == set:
-                                self.board[row1][i] |= set([digit])
+                        progress |= self.eliminate_poss(digit, row=row1, exceptions=pos)
 
-                    if col1 == col2:
-                        for i in range(9):
-                            if i != row1 and i != row2 and type(self.board[i][col1]) == set:
-                                self.board[i][col1] |= set([digit])
+                    elif col1 == col2:
+                        progress |= self.eliminate_poss(digit, col=col1, exceptions=pos)
 
+                    if progress:
+                        return True
 
-        return True
+        return False
 
 board_string =  "...7..8......4..3......9..16..5......1..3..4...5..1..75..2..6...3..8..9...7.....2"
 board_string_single_canidate = ".91745.6.4....1.7.573....4.....37.5...92.46...3.65.....1....536.4.9....8.2.57649."
@@ -178,7 +281,12 @@ board = sudoku_board(board_string_canidate_line)
 
 print board
 
-while True:
+while not board.is_complete():
+
+   if board.scan_single_canidate():
+       print "single canidate"
+       print board
+       continue
 
    if board.scan_single_position():
        print "single position"
@@ -191,4 +299,10 @@ while True:
         continue
 
    break
+
+if board.is_complete():
+    print "solved"
+
+else:
+    print "give up"
 
