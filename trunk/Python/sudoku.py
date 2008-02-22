@@ -1,6 +1,13 @@
 import os
 
 class sudoku_board:
+    SINGLE_CANIDATE = "single canidate"
+    SINGLE_POSITION = "single position"
+    CANIDATE_LINE   = "canidate line"
+    NAKED_PAIR      = "naked pair"
+    HIDDEN_PAIR     = "hidden pair"
+    X_WING          = "X-wing"
+
     def __init__(self, board_string, empty_cell_char, print_updates=True):
         self.print_updates = print_updates
 
@@ -66,6 +73,11 @@ class sudoku_board:
             if len(self.rows[i]) != 0 or len(self.columns[i]) != 0 or len(self.groups[i]) != 0:
                 return False
 
+        for row in self.board:
+            for col in row:
+                if col == self.empty_cell_flag:
+                    return False
+
         return True
 
     def update_board(self, value, row=-1, col=-1, cell=-1):
@@ -82,12 +94,11 @@ class sudoku_board:
         else:
             raise Exception("you must provide either row and column or a cell tuple")
 
-        num = set([value])
         group = self.calc_group(_row, _col)
 
-        self.rows[_row] -= num
-        self.columns[_col] -= num
-        self.groups[group] -= num
+        self.rows[_row].discard(value)
+        self.columns[_col].discard(value)
+        self.groups[group].discard(value)
 
         self.board[_row][_col] = value
 
@@ -173,6 +184,24 @@ class sudoku_board:
 
     def get_inverse_possibilities(self, row, col):
         return self.SYMBOL_SET - self.get_possibilities(row, col)
+
+    def get_position_tuples(self, row=-1, col=-1, group=-1):
+
+        if row > 8 or col > 8 or cell > 8:
+            raise Exception("the row, col or group number you provided is too big")
+
+        if row > -1 and col < -1 and group < -1:
+            return [ (row, i) for i in range(9) ]
+
+        elif row < -1 and col > -1 and group < -1:
+            return [ (i,col) for i in range(9) ]
+
+        elif row < -1 and col < -1 and group > -1:
+            begin_i,begin_j = self.calc_cell_corner(group)
+            return [ (i,j) for i in range(begin_i, begin_i + 3) for j in range(begin_j, begin_j + 3) ]
+
+        else:
+            raise Exception("you must provide either a row column or a group number")
 
     def get_canidate_list(self, *name, **params):
         """Returns a dictonary of all canidate sets for a given part of the board.
@@ -362,12 +391,32 @@ class sudoku_board:
                 return True
         return False
 
+    def scan_x_wing(self):
+        filter_function = lambda x: len(x[1]) == 2
+        map_function = lambda x: (x[0], set(x[1]))
+
+        def workhorse(first_histogram, second_histogram):
+            one = map(map_function, filter(filter_function, first_histogram.items()))
+            two = dict(map(map_function, filter(filter_function, second_histogram.items())))
+
+            Progress = False
+            for item in one:
+                symbol, set = item
+
+                if symbol in two and two[symbol] == set:
+                    Progress |= self.eliminate_canidates(symbol,
+
 
     def solve(self, print_updates = True):
         self.print_updates = print_updates
 
-        tech_count = { "single canidate" : 0, "single position" : 0, "canidate line" : 0,
-                       "naked pair" : 0, "hidden pair" : 0 }
+        techniques = [ (self.SINGLE_CANIDATE, self.scan_single_canidate) ,
+                       (self.SINGLE_POSITION, self.scan_single_position) ,
+                       (self.NAKED_PAIR, self.scan_naked_pair) ,
+                       (self.CANIDATE_LINE, self.scan_canidate_line) ,
+                       (self.HIDDEN_PAIR, self.scan_hidden_pair)  ]
+
+        tech_count = dict([ (i[0], 0) for i in techniques ])
 
         def conditional_print():
             self.__conditional_print(str(self))
@@ -375,30 +424,19 @@ class sudoku_board:
         print "inital board"
         conditional_print()
         while not self.is_complete():
+            Progress = False
 
-            if self.scan_single_canidate():
-                conditional_print()
-                tech_count["single canidate"] += 1
-                continue
+            for tech in techniques:
+                name, func = tech
 
-            if self.scan_single_position():
-                conditional_print()
-                tech_count["single position"] += 1
-                continue
+                Progress = func()
 
-            if self.scan_naked_pair():
-                conditional_print()
-                tech_count["naked pair"] += 1
-                continue
+                if Progress:
+                    tech_count[name] += 1
+                    conditional_print()
+                    break
 
-            if self.scan_canidate_line():
-                conditional_print()
-                tech_count["canidate line"] += 1
-                continue
-
-            if self.scan_hidden_pair():
-                conditional_print()
-                tech_count["hidden pair"] += 1
+            if Progress:
                 continue
 
             break
@@ -424,5 +462,5 @@ naked_pair      = "4..27.6..798156234.2.84...7237468951849531726561792843.82.154
 hidden_pair     = "8.1..6.943....9.8.97..8.5..547.62.3.632....5.198375246.8362.915.65198...2195....8"
 
 if __name__ == "__main__":
-    board = sudoku_board(hidden_pair, '.')
+    board = sudoku_board(scan_only, '.')
     board.solve()
