@@ -12,6 +12,7 @@ set showcmd
 "call strftime and then insert the contents of the = register
 abbrev *copy* <C-R>=strftime("Copyright (C) %Y Seth Sims")<CR>
 
+"highlight trailing whitespace
 match spellRare /[ \t\r]\+$/
 
 "turn off the annoying flashing and beeping on errors
@@ -57,11 +58,8 @@ set shiftround
 " file type specific text formating
 " enable filetype detection
 filetype on
+filetype plugin on
 
-autocmd! FileType c,cpp,java call CStyle()
-autocmd! FileType make call MakeStyle()
-autocmd! FileType python call PythonStyle()
-autocmd! FileType sh call ShStyle()
 autocmd! BufReadPre *vimrc call ProgramStyle()
 
 function! CommentBind(replacement)
@@ -85,55 +83,10 @@ function! ProgramStyle()
     set tags=./tags;../../../../
 endfunction "ProgramStyle
 
-function! CStyle()
-    call ProgramStyle()
-
-    call CommentBind(':s~^[ ]\{0,2}~//~')
-
-    set cindent
-    set formatoptions+=ro
-endfunction "CStyle
-
-function! MakeStyle()
-    call ProgramStyle()
-
-    call CommentBind(':s/^[ ]\?/#/')
-
-    set noexpandtab
-    set autoindent
-    set list
-    set lcs=tab:..
-endfunction "MakeStyle
-
-function! PythonStyle()
-    call ProgramStyle()
-
-    call CommentBind(':s/^[ ]\?/#/')
-
-    abbrev #! #!/usr/bin/python
-    match spellRare /;$/
-
-    set list
-    set lcs=tab:..
-    set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
-    set smartindent
-endfunction "PythonStyle
-
-function! ShStyle()
-    call ProgramStyle()
-    call CommentBind(':s/^[ ]\?/#/')
-
-    abbrev #! #!/bin/bash
-
-endfunction "ShStyle
-
-
-if $COMSPEC != ""
-
-    "windows stuff
-
-else
-    "linux stuff
-    autocmd! BufWritePost *.py,*.bf,*.sh silent !chmod u+x %
-
-endif
+function! OsName()
+    if $COMSPEC != ""
+        return "windows"
+    else
+        return "linux"
+    endif
+endfunction "osName
