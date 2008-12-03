@@ -18,8 +18,6 @@ if __name__ == "__main__":
 
     turtle.down()
 
-    max_x, max_y, min_x, min_y = 0, 0, 0, 0
-
     for i in move_list:
         if i == "F":
             turtle.forward(SEGMENT_LENGTH)
