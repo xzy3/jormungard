@@ -119,6 +119,7 @@ public class Line2d extends MathBase {
         return Vector2d.independentOf(lhs.normal, other, maxUlps);
     } //end isPerpendicular
 
+    @Override
     public int hashCode() {
         final int seed = 983;
 
@@ -128,4 +129,26 @@ public class Line2d extends MathBase {
 
         return hash.hashCode();
     } //end hashCode
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } //end if
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        } //end if
+
+        final Line2d other = (Line2d) obj;
+        if (this.normal != other.normal && (this.normal == null || !this.normal.equals(other.normal))) {
+            return false;
+        } //end if
+
+        if (this.c != other.c) {
+            return false;
+        } //end if
+
+        return true;
+    } //end equals
 } //end class Class
