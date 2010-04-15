@@ -60,8 +60,10 @@ public class Point2d extends MathBase {
      */
     public Vector2d toVector2d() { return new Vector2d(x, y); } //end toVector2d
 
+    @Override
     public String toString() { return String.format("(%f, %f)", x, y); } //end toString
 
+    @Override
     public int hashCode() {
         final int seed = 269;
 
@@ -71,4 +73,22 @@ public class Point2d extends MathBase {
 
         return hash.hashCode();
     } //end hashCode
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } //end if
+        if (getClass() != obj.getClass()) {
+            return false;
+        } //end if
+        final Point2d other = (Point2d) obj;
+        if (this.x != other.x) {
+            return false;
+        } //end if
+        if (this.y != other.y) {
+            return false;
+        } //end if
+        return true;
+    } //end equals
 } //end class Class
